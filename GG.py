@@ -1,4 +1,4 @@
-# Impor - Modul: pygame
+# Import - Modul: pygame
 import pygame
 
 # Import - Modul: Spielclient

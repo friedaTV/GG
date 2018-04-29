@@ -58,9 +58,6 @@ class Spielclient:
         # Spielsteuerung festlegen
         self.Spielsteuerung = self.festlegen_steuerung()
 
-        # DEBUG - Bildschirmausgabe: self.Spielsteuerung
-        print (self.Spielsteuerung)
-
         # Daten - Spielfigur festlegen
         self.Daten_Spielfigur = None
 
