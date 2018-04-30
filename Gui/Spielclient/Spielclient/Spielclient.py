@@ -22,6 +22,12 @@ from Gui.Objekte.Spielfigur.Spielfigur import Spielfigur
 # Import - Modul: Kamera
 from Gui.Objekte.Kamera.Kamera import Kamera
 
+# Import - Modul: Spielwelt
+from Gui.Objekte.Spielwelt.Spielwelt import Spielwelt
+
+# Import - Modul: Planet
+from Engine.Generatoren.Generator_Planet import Planet
+
 class Spielclient:
     def __init__(self):
         # Programmkonfiguration festlegen
@@ -88,8 +94,14 @@ class Spielclient:
         # Objekt - Spielfigur festlegen
         self.Objekt_Spielfigur = Spielfigur(self, 1, 1)
 
+        # Objekt - Planet festlegen
+        self.Objekt_Planet = Planet('friedaTV')
+
+        # Objekt - Spielwelt festlegen
+        self.Objekt_Spielwelt = Spielwelt(self.Objekt_Planet)
+
         # Objekt - Kamera festlegen
-        self.Objekt_Kamera = Kamera(self.Programmkonfiguration[7][0], self.Programmkonfiguration[7][1])
+        self.Objekt_Kamera = Kamera(self.Objekt_Spielwelt.Breite, self.Objekt_Spielwelt.Hoehe)
 
         # Rueckgabewert festlegen
         return True
@@ -188,7 +200,7 @@ class Spielclient:
 
     def zeichnen(self):
         # Spielwelt zeichnen
-        self.Clientfenster.fill((255, 255, 255))
+        self.Clientfenster.blit(self.Objekt_Spielwelt.Spielwelt_Textur, self.Objekt_Kamera.binden_spielwelt(self.Objekt_Spielwelt.Spielwelt_Objekt))
 
         # Gruppe - Objekte zeichnen
         for Sprite in self.Gruppe_Objekte:
