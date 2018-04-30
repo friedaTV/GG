@@ -27,6 +27,12 @@ def programmkonfiguration_laden():
 
         # Versuch: Programmeigenschaften festzulegen
         try:
+            # Titel festlegen
+            Titel = Konfiguration['Allgemein']['Titel']
+
+            # Entwicklungsphase festlegen
+            Entwicklungsphase = Konfiguration['Allgemein']['Entwicklungsphase']
+
             # Versionsnummer festlegen
             Versionsnummer = Konfiguration['Allgemein']['Versionsnummer']
 
@@ -48,6 +54,9 @@ def programmkonfiguration_laden():
             # Kachelgroesse festlegen
             Kachelgroesse = int(Konfiguration['Grafik']['Kachelgroesse'])
 
+            # Kontroller - Varianz festlegen
+            Kontroller_Varianz = float(Konfiguration['Steuerung']['Kontroller_Varianz'])
+
             # IP - Adresse festlegen
             IP_Adresse = Konfiguration['Netzwerk']['IP_Adresse']
 
@@ -63,6 +72,12 @@ def programmkonfiguration_laden():
             # Herausgeber festlegen
             Herausgeber = Konfiguration['Rechte']['Herausgeber']
         except:
+            # Titel festlegen
+            Titel = None
+
+            # Entwicklungsphase festlegen
+            Entwicklungsphase = None
+
             # Versionsnummer festlegen
             Versionsnummer = None
 
@@ -84,6 +99,9 @@ def programmkonfiguration_laden():
             # Kachelgroesse festlegen
             Kachelgroesse = None
 
+            # Kontroller - Varianz festlegen
+            Kontroller_Varianz = None
+
             # IP - Adresse festlegen
             IP_Adresse = None
 
@@ -100,6 +118,8 @@ def programmkonfiguration_laden():
             Herausgeber = None
 
         # Programmkonfiguration festlegen
+        Programmkonfiguration.append(Titel)
+        Programmkonfiguration.append(Entwicklungsphase)
         Programmkonfiguration.append(Versionsnummer)
         Programmkonfiguration.append(Programmsprache)
         Programmkonfiguration.append(Status_Debug)
@@ -107,6 +127,7 @@ def programmkonfiguration_laden():
         Programmkonfiguration.append(Max_FPS)
         Programmkonfiguration.append(Fenstergroesse)
         Programmkonfiguration.append(Kachelgroesse)
+        Programmkonfiguration.append(Kontroller_Varianz)
         Programmkonfiguration.append(IP_Adresse)
         Programmkonfiguration.append(Port)
         Programmkonfiguration.append(Paketgroesse)

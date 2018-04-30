@@ -16,6 +16,12 @@ from Engine.System.Programmkonfiguration import programmkonfiguration_laden
 # Import - Modul: sprachmodul_laden
 from Engine.System.Sprachmodul import sprachmodul_laden
 
+# Import - Modul: Spielfigur
+from Gui.Objekte.Spielfigur.Spielfigur import Spielfigur
+
+# Import - Modul: Kamera
+from Gui.Objekte.Kamera.Kamera import Kamera
+
 class Spielclient:
     def __init__(self):
         # Programmkonfiguration festlegen
@@ -26,12 +32,18 @@ class Spielclient:
 
         # Clientfenster festlegen
         if (self.Programmkonfiguration[3]):
-            self.Clientfenster = pygame.display.set_mode(self.Programmkonfiguration[5], pygame.FULLSCREEN)
+            self.Clientfenster = pygame.display.set_mode(self.Programmkonfiguration[7], pygame.FULLSCREEN)
         else:
-            self.Clientfenster = pygame.display.set_mode(self.Programmkonfiguration[5])
+            self.Clientfenster = pygame.display.set_mode(self.Programmkonfiguration[7])
+
+        # Clientfenster - Titel festlegen
+        pygame.display.set_caption(self.Programmkonfiguration[0] + ' ' + self.Programmkonfiguration[1] + ' ' + self.Programmkonfiguration[2])
 
         # Programmuhr festlegen
         self.Programmuhr = pygame.time.Clock()
+
+        # Spielclient - Daten festlegen
+        self.laden_daten()
 
         # Spielclient - Socket festlegen
         Status_Sockets = self.erstellen_socket()
@@ -44,9 +56,6 @@ class Spielclient:
 
         # Status - Spielclient festlegen
         self.Status_Spielclient = self.festlegen_status(Status_Sockets, Status_Gruppen, Status_Objekte)
-
-        # Spielclient - Daten festlegen
-        self.laden_daten()
 
     def laden_daten(self):
         # Pfad - Texturen festlegen
@@ -62,18 +71,27 @@ class Spielclient:
         self.Daten_Spielfigur = None
 
         # Textur - Spielfigur festlegen
-        self.Textur_Spielfigur = None
+        self.Textur_Spielfigur = pygame.image.load(os.path.join(Pfad_Texturen, 'Textur_Spielfigur.png'))
 
     def erstellen_socket(self):
         # TODO DEBUG: Rueckgabewert True
         return True
 
     def erstellen_gruppen(self):
-        # TODO DEBUG: Rueckgabewert True
+        # Gruppe  - Objekte festlegen
+        self.Gruppe_Objekte = pygame.sprite.Group()
+
+        # Rueckgabewert festlegen
         return True
 
     def erstellen_objekte(self):
-        # TODO DEBUG: Rueckgabewert True
+        # Objekt - Spielfigur festlegen
+        self.Objekt_Spielfigur = Spielfigur(self, 1, 1)
+
+        # Objekt - Kamera festlegen
+        self.Objekt_Kamera = Kamera(self.Programmkonfiguration[7][0], self.Programmkonfiguration[7][1])
+
+        # Rueckgabewert festlegen
         return True
 
     def festlegen_pfad(self, ID_Pfad):
@@ -122,7 +140,7 @@ class Spielclient:
         # Programmschleife festlegen
         while (self.Status_Spielclient):
             # Programmzeit festlegen
-            self.Programmzeite = self.Programmuhr.tick(self.Programmkonfiguration[4]) / 1000
+            self.Programmzeit = self.Programmuhr.tick(self.Programmkonfiguration[6]) / 1000
 
             # Spielclient - Events festlegen
             self.events()
@@ -162,7 +180,26 @@ class Spielclient:
         sys.exit()
 
     def update(self):
-        pass
+        # Gruppe - Objekte updaten
+        self.Gruppe_Objekte.update()
+
+        # Objekt - Kamera updaten
+        self.Objekt_Kamera.update(self.Objekt_Spielfigur, self.Programmkonfiguration[7][0], self.Programmkonfiguration[7][1])
 
     def zeichnen(self):
-        pass
+        # Spielwelt zeichnen
+        self.Clientfenster.fill((255, 255, 255))
+
+        # Gruppe - Objekte zeichnen
+        for Sprite in self.Gruppe_Objekte:
+            # Objekt - Textur festlegen
+            for Variable in list(vars(Sprite)):
+                # Pruefen, ob es sich hier um das Objekt handelt
+                if ('Textur' in Variable):
+                    # Objekt - Textur festlegen
+                    Objekt_Textur = getattr(Sprite, Variable)
+
+            self.Clientfenster.blit(Objekt_Textur, self.Objekt_Kamera.binden_objekt(Sprite))
+
+        # PyGame aktualisieren
+        pygame.display.flip()
