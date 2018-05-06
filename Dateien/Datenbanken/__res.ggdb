@@ -1,0 +1,15 @@
+<Pflanzen>
+    <Holz>
+        <Eiche>
+            <Lebenspunkte>
+                100
+<Gesteine>
+    <Erz>
+        <Eisen>
+            <Lebenspunkte>
+                100
+
+<Ressourcenart>
+    <Bezeichung_Ressourcentyp>
+        <Bezeichnung_Ressource>
+            <Eigenschaft>

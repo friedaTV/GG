@@ -7,6 +7,9 @@ import os
 # Import - Modul: sys
 import sys
 
+# Import - Modul: random
+import random
+
 # Import - Modul: Variablen
 from Konfiguration import Variablen
 
@@ -19,14 +22,17 @@ from Engine.System.Sprachmodul import sprachmodul_laden
 # Import - Modul: Spielfigur
 from Gui.Objekte.Spielfigur.Spielfigur import Spielfigur
 
+# Import - Modul: Baum
+from Gui.Objekte.Vegetation.Baum import Baum
+
 # Import - Modul: Kamera
 from Gui.Objekte.Kamera.Kamera import Kamera
 
 # Import - Modul: Spielwelt
 from Gui.Objekte.Spielwelt.Spielwelt import Spielwelt
 
-# Import - Modul: Planet
-from Engine.Generatoren.Generator_Planet import Planet
+# Import - Modul: Spritesheet
+from Engine.Grafik.Spritesheet import Spritesheet
 
 class Spielclient:
     def __init__(self):
@@ -48,6 +54,9 @@ class Spielclient:
         # Programmuhr festlegen
         self.Programmuhr = pygame.time.Clock()
 
+        # Spielclient - Texturen festlegen
+        self.laden_texturen()
+
         # Spielclient - Daten festlegen
         self.laden_daten()
 
@@ -63,29 +72,33 @@ class Spielclient:
         # Status - Spielclient festlegen
         self.Status_Spielclient = self.festlegen_status(Status_Sockets, Status_Gruppen, Status_Objekte)
 
-    def laden_daten(self):
+    def laden_texturen(self):
         # Pfad - Texturen festlegen
         Pfad_Texturen = self.festlegen_pfad(0)
 
-        # Pfad - Szenen festlegen
-        Pfad_Szenen = self.festlegen_pfad(1)
+        # Spielfigur - Textur festlegen
+        self.Spielfigur_Textur = Spritesheet(os.path.join(Pfad_Texturen, 'Spielfigur_SpriteSheet.png'), (64, 64))
 
-        # Spielsteuerung festlegen
-        self.Spielsteuerung = self.festlegen_steuerung()
+        # Baum - Textur festlegen
+        self.Baum_Textur = Spritesheet(os.path.join(Pfad_Texturen, 'Baum_SpriteSheet.png'), (64, 96))
+
+    def laden_daten(self):
+        # Spielsteuerung und Status - Spielsteuerung festlegen
+        self.Spielsteuerung, self.Status_Spielsteuerung = self.festlegen_steuerung()
 
         # Daten - Spielfigur festlegen
-        self.Daten_Spielfigur = None
-
-        # Textur - Spielfigur festlegen
-        self.Textur_Spielfigur = pygame.image.load(os.path.join(Pfad_Texturen, 'Textur_Spielfigur.png'))
+        self.Spielfigur_Daten = None
 
     def erstellen_socket(self):
         # TODO DEBUG: Rueckgabewert True
         return True
 
     def erstellen_gruppen(self):
-        # Gruppe  - Objekte festlegen
+        # Gruppe - Objekte festlegen
         self.Gruppe_Objekte = pygame.sprite.Group()
+
+        # Gruppe - Vegetation festlegen
+        self.Gruppe_Vegetation = pygame.sprite.Group()
 
         # Rueckgabewert festlegen
         return True
@@ -94,14 +107,14 @@ class Spielclient:
         # Objekt - Spielfigur festlegen
         self.Objekt_Spielfigur = Spielfigur(self, 1, 1)
 
-        # Objekt - Planet festlegen
-        self.Objekt_Planet = Planet('friedaTV')
+        # Objekt - Baum festlegen
+        self.Objekt_Baum = Baum(self, random.randint(0, 15), random.randint(0, 15))
 
         # Objekt - Spielwelt festlegen
-        self.Objekt_Spielwelt = Spielwelt(self.Objekt_Planet)
+        self.Objekt_Spielwelt = Spielwelt()
 
         # Objekt - Kamera festlegen
-        self.Objekt_Kamera = Kamera(self.Objekt_Spielwelt.Breite, self.Objekt_Spielwelt.Hoehe)
+        self.Objekt_Kamera = Kamera(self.Objekt_Spielwelt.Spielwelt_Breite, self.Objekt_Spielwelt.Spielwelt_Hoehe)
 
         # Rueckgabewert festlegen
         return True
@@ -141,12 +154,18 @@ class Spielclient:
 
             # Spielkontroller initialisieren
             Spielkontroller.init()
+
+            # Status - Spielsteuerung festlegen
+            Status_Spielsteuerung = True
         except:
             # Spielkontroller festlegen
             Spielkontroller = None
 
+            # Status - Spielsteuerung festlegen
+            Status_Spielsteuerung = False
+
         # Rueckgabewert festlegen
-        return Spielkontroller
+        return Spielkontroller, Status_Spielsteuerung
 
     def programmschleife(self):
         # Programmschleife festlegen
@@ -195,6 +214,9 @@ class Spielclient:
         # Gruppe - Objekte updaten
         self.Gruppe_Objekte.update()
 
+        # Gruppe - Vegetations updaten
+        self.Gruppe_Vegetation.update()
+
         # Objekt - Kamera updaten
         self.Objekt_Kamera.update(self.Objekt_Spielfigur, self.Programmkonfiguration[7][0], self.Programmkonfiguration[7][1])
 
@@ -204,6 +226,17 @@ class Spielclient:
 
         # Gruppe - Objekte zeichnen
         for Sprite in self.Gruppe_Objekte:
+            # Objekt - Textur festlegen
+            for Variable in list(vars(Sprite)):
+                # Pruefen, ob es sich hier um das Objekt handelt
+                if ('Textur' in Variable):
+                    # Objekt - Textur festlegen
+                    Objekt_Textur = getattr(Sprite, Variable)
+
+            self.Clientfenster.blit(Objekt_Textur, self.Objekt_Kamera.binden_objekt(Sprite))
+
+        # Gruppe - Vegetation zeichnen
+        for Sprite in self.Gruppe_Vegetation:
             # Objekt - Textur festlegen
             for Variable in list(vars(Sprite)):
                 # Pruefen, ob es sich hier um das Objekt handelt

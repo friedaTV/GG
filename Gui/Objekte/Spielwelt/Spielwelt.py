@@ -2,13 +2,13 @@
 import pygame
 
 class Spielwelt:
-    def __init__(self, Datensatz):
+    def __init__(self):
         # Spielwelt - Eigenschaften festlegen
-        self.Breite = Datensatz.Planet_Eigenschaften[0] * Datensatz.Liste_Biome[0][0].Biomgroesse * 64
-        self.Hoehe = Datensatz.Planet_Eigenschaften[1] * Datensatz.Liste_Biome[0][0].Biomgroesse * 64
+        self.Spielwelt_Breite = 1024
+        self.Spielwelt_Hoehe = 1024
 
         # Spielwelt - Textur - Debug festlegen
-        self.Spielwelt_Textur_Debug = pygame.image.load('E:\Python\GG\Dateien\Texturen\Textur_Debug.png')
+        self.Spielwelt_Textur_Debug = pygame.image.load('E:\Python\GG\Dateien\Texturen\Textur_Gras_Sommer_Natuerlich.png')
 
         # Spielwelt - Textur festlegen
         self.Spielwelt_Textur = self.karte_erstellen()
@@ -16,14 +16,17 @@ class Spielwelt:
         # Spielwelt - Objekt festlegen
         self.Spielwelt_Objekt = self.Spielwelt_Textur.get_rect()
 
+    def festlegen_cluster(self):
+        pass
+
     def zeichnen(self, Objekt):
-        for Position_Y in range(self.Hoehe):
-            for Position_X in range(self.Breite):
+        for Position_Y in range(self.Spielwelt_Hoehe):
+            for Position_X in range(self.Spielwelt_Breite):
                 Objekt.blit(self.Spielwelt_Textur_Debug, (Position_X * 64, Position_Y * 64))
 
     def karte_erstellen(self):
         # Spielwelt - Objekt festlegen
-        Spielwelt_Objekt = pygame.Surface((self.Breite, self.Hoehe))
+        Spielwelt_Objekt = pygame.Surface((self.Spielwelt_Breite, self.Spielwelt_Hoehe))
 
         # Spielwelt zeichnen
         self.zeichnen(Spielwelt_Objekt)
