@@ -1,5 +1,6 @@
 # Spielfigur
-- Objekt mit zentriert werden
+- Prüften, ob Spielfigur vor oder hinter einem Objekt steht
+    > Falls davor, Rect neu zeichnen
 
 # Szenenmanager
 - Klasse: Szene erstellen

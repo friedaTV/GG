@@ -25,6 +25,9 @@ from Gui.Objekte.Spielfigur.Spielfigur import Spielfigur
 # Import - Modul: Baum
 from Gui.Objekte.Vegetation.Baum import Baum
 
+# Import - Modul: Wasser
+from Gui.Objekte.Oberflaechen.Wasser import Wasser
+
 # Import - Modul: Kamera
 from Gui.Objekte.Kamera.Kamera import Kamera
 
@@ -82,6 +85,9 @@ class Spielclient:
         # Baum - Textur festlegen
         self.Baum_Textur = Spritesheet(os.path.join(Pfad_Texturen, 'Baum_SpriteSheet.png'), (64, 96))
 
+        # Wasser - Textur festlegen
+        self.Wasser_Textur = Spritesheet(os.path.join(Pfad_Texturen, 'Wasser_SpriteSheet.png'), (48, 48))
+
     def laden_daten(self):
         # Spielsteuerung und Status - Spielsteuerung festlegen
         self.Spielsteuerung, self.Status_Spielsteuerung = self.festlegen_steuerung()
@@ -95,23 +101,28 @@ class Spielclient:
 
     def erstellen_gruppen(self):
         # Gruppe - Objekte festlegen
-        self.Gruppe_Objekte = pygame.sprite.Group()
+        self.Gruppe_Objekte = pygame.sprite.LayeredUpdates()
 
-        # Gruppe - Vegetation festlegen
-        self.Gruppe_Vegetation = pygame.sprite.Group()
+        # Gruppe - Oberflaechen festlegen
+        self.Gruppe_Oberflaechen = pygame.sprite.Group()
 
         # Rueckgabewert festlegen
         return True
 
     def erstellen_objekte(self):
+        # Objekt - Baum festlegen
+        self.Objekt_Baum = Baum(self, 4, 1)
+
+        for PosY in range(16):
+            for PosX in range(16):
+                # Objekt - Wasser festlegen
+                self.Objekt_Baum = Baum(self, PosX + 5, PosY + 5)
+
         # Objekt - Spielfigur festlegen
         self.Objekt_Spielfigur = Spielfigur(self, 1, 1)
 
-        # Objekt - Baum festlegen
-        self.Objekt_Baum = Baum(self, random.randint(0, 15), random.randint(0, 15))
-
         # Objekt - Spielwelt festlegen
-        self.Objekt_Spielwelt = Spielwelt()
+        self.Objekt_Spielwelt = Spielwelt(self)
 
         # Objekt - Kamera festlegen
         self.Objekt_Kamera = Kamera(self.Objekt_Spielwelt.Spielwelt_Breite, self.Objekt_Spielwelt.Spielwelt_Hoehe)
@@ -214,8 +225,8 @@ class Spielclient:
         # Gruppe - Objekte updaten
         self.Gruppe_Objekte.update()
 
-        # Gruppe - Vegetations updaten
-        self.Gruppe_Vegetation.update()
+        # Gruppe - Oberflaeche updaten
+        self.Gruppe_Oberflaechen.update()
 
         # Objekt - Kamera updaten
         self.Objekt_Kamera.update(self.Objekt_Spielfigur, self.Programmkonfiguration[7][0], self.Programmkonfiguration[7][1])
@@ -235,8 +246,8 @@ class Spielclient:
 
             self.Clientfenster.blit(Objekt_Textur, self.Objekt_Kamera.binden_objekt(Sprite))
 
-        # Gruppe - Vegetation zeichnen
-        for Sprite in self.Gruppe_Vegetation:
+        # Gruppe - Oberflaechen zeichnen
+        for Sprite in self.Gruppe_Oberflaechen:
             # Objekt - Textur festlegen
             for Variable in list(vars(Sprite)):
                 # Pruefen, ob es sich hier um das Objekt handelt
@@ -245,6 +256,16 @@ class Spielclient:
                     Objekt_Textur = getattr(Sprite, Variable)
 
             self.Clientfenster.blit(Objekt_Textur, self.Objekt_Kamera.binden_objekt(Sprite))
+
+        # DEBUG - Fenstermitte zeichnen
+        pygame.draw.line(self.Clientfenster, (255, 255, 255), (640, 0), (640, 720))
+        pygame.draw.line(self.Clientfenster, (255, 255, 255), (0, 360), (1280, 360))
+
+        # DEBUG - Fenstermitte zeichnen
+        pygame.draw.rect(self.Clientfenster, (255, 255, 255), (self.Objekt_Spielfigur.Spielfigur_Objekt.x, self.Objekt_Spielfigur.Spielfigur_Objekt.y, self.Objekt_Spielfigur.Spielfigur_Objekt.width, self.Objekt_Spielfigur.Spielfigur_Objekt.height), 2)
+
+        # DEBUG
+        pygame.draw.rect(self.Clientfenster, (255, 255, 255), (self.Objekt_Baum.Baum_Objekt.x, self.Objekt_Baum.Baum_Objekt.y, self.Objekt_Baum.Baum_Objekt.width, self.Objekt_Baum.Baum_Objekt.height), 2)
 
         # PyGame aktualisieren
         pygame.display.flip()

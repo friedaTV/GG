@@ -57,6 +57,9 @@ def programmkonfiguration_laden():
             # Kontroller - Varianz festlegen
             Kontroller_Varianz = float(Konfiguration['Steuerung']['Kontroller_Varianz'])
 
+            # Reichweite - Kollision festlegen
+            Reichweite_Kollision = float(Konfiguration['Steuerung']['Reichweite_Kollision'])
+
             # IP - Adresse festlegen
             IP_Adresse = Konfiguration['Netzwerk']['IP_Adresse']
 
@@ -102,6 +105,9 @@ def programmkonfiguration_laden():
             # Kontroller - Varianz festlegen
             Kontroller_Varianz = None
 
+            # Reichweite - Kollision festlegen
+            Reichweite_Kollision = None
+
             # IP - Adresse festlegen
             IP_Adresse = None
 
@@ -128,6 +134,7 @@ def programmkonfiguration_laden():
         Programmkonfiguration.append(Fenstergroesse)
         Programmkonfiguration.append(Kachelgroesse)
         Programmkonfiguration.append(Kontroller_Varianz)
+        Programmkonfiguration.append(Reichweite_Kollision)
         Programmkonfiguration.append(IP_Adresse)
         Programmkonfiguration.append(Port)
         Programmkonfiguration.append(Paketgroesse)

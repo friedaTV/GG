@@ -34,10 +34,10 @@ class Kamera:
                 Objekt_Objekt = getattr(Objekt, Variable)
 
         # Offset - X festlegen
-        Offset_X = (-1) * Objekt_Objekt.x + int(Fensterbreite / 2)
+        Offset_X = (-1) * Objekt_Objekt.centerx + int(Fensterbreite / 2)
 
         # Offset - Y festlegen
-        Offset_Y = (-1) * Objekt_Objekt.y + int(Fensterhoehe / 2)
+        Offset_Y = (-1) * Objekt_Objekt.centery + int(Fensterhoehe / 2)
 
         # Kamera - Bewegung festlegen
         X = min(0, Offset_X)

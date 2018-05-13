@@ -5,12 +5,15 @@ import pygame
 import numpy
 
 class Baum(pygame.sprite.Sprite):
-    def __init__(self, Spielclient, Position_X, Position_Y):
+    def __init__(self, Spielclient, Position_X, Position_Y, Baum_Alter = None):
         # Gruppe festlegen
-        self.Gruppe = Spielclient.Gruppe_Vegetation
+        self.Gruppe = Spielclient.Gruppe_Objekte
 
         # Baum festlegen
         pygame.sprite.Sprite.__init__(self, self.Gruppe)
+
+        # Gruppe - Layer festlegen
+        self.Gruppe.change_layer(self, 2)
 
         # Spielclient festlegen
         self.Spielclient = Spielclient
@@ -24,20 +27,31 @@ class Baum(pygame.sprite.Sprite):
         # Baum - Eigenschaften festlegen
         self.Status_Baum = True
         self.Baum_Lebenspunkte = 100
-        self.Baum_Alter = 0
         self.Baum_Menge_Ressource = 0
+
+        # Pruefen, ob der Baum schon ein Alter besitzt
+        if (Baum_Alter != None):
+            # Baum - Alter festlegen
+            self.Baum_Alter = Baum_Alter
+        else:
+            # Baum - Alter festlegen
+            self.Baum_Alter = 0
 
         # Vektor festlegen
         self.Vektor = pygame.math.Vector2
 
         # Baum - Position festlegen
-        self.Baum_Position = self.Vektor(Position_X, Position_Y) * Spielclient.Programmkonfiguration[8]
+        self.Baum_Position = self.Vektor(Position_X, Position_Y) * self.Spielclient.Programmkonfiguration[8]
 
         # Baum - Aktuelle - Zeit festlegen
         self.Baum_Aktuelle_Zeit = 0
 
         # Baum - Zeit festlegen
         self.Baum_Zeit = 0.4
+
+    def festlegen_layer(self, ID_Layer):
+        # Gruppe - Layer festlegen
+        self.Gruppe.change_layer(self, ID_Layer)
 
     def wachsen(self, dt):
         # Pruefen, ob der Baum mehr Lebenspunkte bekommt

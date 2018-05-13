@@ -1,6 +1,9 @@
 # Import - Modul: pygame
 import pygame
 
+# Import - Modul: math
+import math
+
 class Spielfigur(pygame.sprite.Sprite):
     def __init__(self, Spielclient, Position_X, Position_Y):
         # Gruppe festlegen
@@ -8,6 +11,9 @@ class Spielfigur(pygame.sprite.Sprite):
 
         # Spielfigur festlegen
         pygame.sprite.Sprite.__init__(self, self.Gruppe)
+
+        # Gruppe - Layer festelgen
+        self.Gruppe.change_layer(self, 2)
 
         # Spielclient festlegen
         self.Spielclient = Spielclient
@@ -28,7 +34,7 @@ class Spielfigur(pygame.sprite.Sprite):
         self.Spielfigur_Ausrichtung = self.Vektor(0, 0)
 
         # Spielfigur - Position festlegen
-        self.Spielfigur_Position = self.Vektor(Position_X, Position_Y) * Spielclient.Programmkonfiguration[8]
+        self.Spielfigur_Position = self.Vektor(Position_X , Position_Y) * Spielclient.Programmkonfiguration[8]
 
         # Spielfigur - Animation - Index festlegen
         self.Spielfigur_Animation_Index = 0
@@ -49,6 +55,68 @@ class Spielfigur(pygame.sprite.Sprite):
 
         # Rueckgabewert festlegen
         return Liste_Bewegung[ID_Richtung]
+
+    def festlegen_richtung(self):
+        # Pruefen, in welche Richtung die Spielfigur sich bewegt
+        if (abs(self.Spielfigur_Ausrichtung.x) > abs(self.Spielfigur_Ausrichtung.y)):
+            # Pruefen, ob die Spielfigur nach links oder rechts sich bewegt
+            if (self.Spielfigur_Ausrichtung.x >= 0):
+                # ID - Richtung festlegen
+                ID_Richtung = 2
+            else:
+                # ID - Richtung festlegen
+                ID_Richtung = 1
+        elif (abs(self.Spielfigur_Ausrichtung.y) > abs(self.Spielfigur_Ausrichtung.x)):
+            # Pruefen, ob die Spielfigur nach oben oder unten sich bewegt
+            if (self.Spielfigur_Ausrichtung.y >= 0):
+                # ID - Richtung festlegen
+                ID_Richtung = 0
+            else:
+                # ID - Richtung festlegen
+                ID_Richtung = 3
+        else:
+            # ID - Richtung festlegen
+            ID_Richtung = 99
+
+        # Rueckgabewert festlegen
+        return ID_Richtung
+
+    def festlegen_kollision(self, Objekt):
+        if ((Objekt.x <= self.Spielfigur_Objekt.x <= Objekt.x + Objekt.width) and (Objekt.y <= self.Spielfigur_Objekt.y <= Objekt.y + Objekt.height)):
+            # Rueckgabewert festlegen
+            return True
+        elif ((Objekt.x <= self.Spielfigur_Objekt.x + self.Spielfigur_Objekt.width <= Objekt.x + Objekt.width) and (Objekt.y <= self.Spielfigur_Objekt.y <= Objekt.y + Objekt.height)):
+            # Rueckgabewert festlegen
+            return True
+        elif ((Objekt.x <= self.Spielfigur_Objekt.x <= Objekt.x + Objekt.width) and (Objekt.y <= self.Spielfigur_Objekt.y + self.Spielfigur_Objekt.height <= Objekt.y + Objekt.height)):
+            # Rueckgabewert festlegen
+            return True
+        elif ((Objekt.x <= self.Spielfigur_Objekt.x + self.Spielfigur_Objekt.width <= Objekt.x + Objekt.width) and (Objekt.y <= self.Spielfigur_Objekt.y + self.Spielfigur_Objekt.height <= Objekt.y + Objekt.height)):
+            # Rueckgabewert festlegen
+            return True
+        else:
+            # Rueckgabewert festlegen
+            return False
+
+    def festlegen_bewegung(self, Sprite):
+        # Objekt festlegen
+        for Variable in list(vars(Sprite)):
+            # Pruefen, ob es sich hier um das Objekt handelt
+            if ('Objekt' in Variable):
+                # Objekt festlegen
+                Objekt = getattr(Sprite, Variable)
+
+        # Pruefen, ob Spielfigur mit Sprite kollidiert
+        if (self.festlegen_kollision(Objekt)):
+            if (Objekt != self):
+                if (math.hypot((self.Spielfigur_Objekt.centerx - Objekt.centerx), (self.Spielfigur_Objekt.centery - Objekt.centery)) <= self.Spielclient.Programmkonfiguration[8]):
+                    # Pruefen, ob sich Spielfigur unterhalb des Objektes befindet
+                    if (self.Spielfigur_Objekt.centery >= Objekt.centery):
+                        self.Gruppe.change_layer(Sprite, 1)
+                    else:
+                        self.Gruppe.change_layer(Sprite, 2)
+        else:
+            self.Gruppe.change_layer(Sprite, 2)
 
     def steuerung(self):
         # Spielfigur - Ausrichtung festlegen
@@ -77,26 +145,8 @@ class Spielfigur(pygame.sprite.Sprite):
             self.Spielfigur_Animation_Zeit = 0.2
 
     def animation(self, dt):
-        # Pruefen, in welche Richtung die Spielfigur sich bewegt
-        if (abs(self.Spielfigur_Ausrichtung.x) > abs(self.Spielfigur_Ausrichtung.y)):
-            # Pruefen, ob die Spielfigur nach links oder rechts sich bewegt
-            if (self.Spielfigur_Ausrichtung.x >= 0):
-                # ID - Richtung festlegen
-                ID_Richtung = 2
-            else:
-                # ID - Richtung festlegen
-                ID_Richtung = 1
-        elif (abs(self.Spielfigur_Ausrichtung.y) > abs(self.Spielfigur_Ausrichtung.x)):
-            # Pruefen, ob die Spielfigur nach oben oder unten sich bewegt
-            if (self.Spielfigur_Ausrichtung.y >= 0):
-                # ID - Richtung festlegen
-                ID_Richtung = 0
-            else:
-                # ID - Richtung festlegen
-                ID_Richtung = 3
-        else:
-            # ID - Richtung festlegen
-            ID_Richtung = 99
+        # ID - Richtung festlegen
+        ID_Richtung = self.festlegen_richtung()
 
         # Liste - Animation festlegen
         Liste_Animation = self.festlegen_animationen(ID_Richtung)
@@ -129,6 +179,13 @@ class Spielfigur(pygame.sprite.Sprite):
 
         # Spielfigur - Animation festlegen
         self.animation(self.Spielclient.Programmzeit)
+
+        # Pruefen, ob Spieler kollidiert
+        for Sprite in self.Gruppe:
+            # Pruefen, ob das Sprite die Spielfigur ist
+            if (Sprite != self):
+                # Kollision festlegen
+                self.festlegen_bewegung(Sprite)
 
         # Spielfigur - Position festlegen
         self.Spielfigur_Position += self.Spielfigur_Ausrichtung * self.Spielclient.Programmzeit
